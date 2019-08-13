@@ -1,4 +1,4 @@
-export default class MPromise {
+class MPromise {
   constructor(fn) {
     this.callbackChain = [];
 
@@ -63,3 +63,8 @@ export default class MPromise {
     }
   }
 }
+
+MPromise.resolve = value => new MPromise(resolve => resolve(value));
+MPromise.reject = error => new MPromise((resolve, reject) => reject(error));
+
+export default MPromise;

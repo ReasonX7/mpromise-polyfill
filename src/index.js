@@ -1,8 +1,5 @@
 import MPromise from "./MPromise";
 
-MPromise.resolve = value => new MPromise(resolve => resolve(value));
-MPromise.reject = error => new MPromise((resolve, reject) => reject(error));
-
 new MPromise(resolve => setTimeout(resolve, 2000))
   .then(() => console.log("1: here"))
   .then(() => "1: some message")
@@ -32,3 +29,10 @@ MPromise.resolve("2: MPromise.resolve").then(console.log);
 MPromise.reject(new Error("3: MPromise.reject"))
   .then(() => console.log("3: this should not be logged"))
   .catch(error => console.log("3:", error.message));
+
+(async () => {
+  const num = await new MPromise(resolve =>
+    setTimeout(() => resolve(546), 8000)
+  );
+  console.log("awaited a number for 8 seconds:", num);
+})();
