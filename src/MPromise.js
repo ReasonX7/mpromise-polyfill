@@ -1,13 +1,10 @@
 export default class MPromise {
   constructor(fn) {
     this.callbackChain = [];
-    this.resolveCallback = () => {};
 
     this._rejected = false;
 
     this._handleNext = this._handleNext.bind(this);
-    this._handleResolve = this._handleResolve.bind(this);
-    this._onPromiseResolve = this._onPromiseResolve.bind(this);
 
     setTimeout(() => {
       fn(
@@ -38,14 +35,12 @@ export default class MPromise {
 
   _handleNext(result) {
     if (result instanceof MPromise) {
-      result._onPromiseResolve(this._handleNext);
+      result.then(this._handleNext);
       return;
     }
 
     if (this.callbackChain.length === 0) {
-      if (!this._rejected) {
-        this._handleResolve(result);
-      } else {
+      if (this._rejected) {
         throw new Error("Uncaught (in promise) Error: " + result.message);
       }
     } else {
@@ -66,13 +61,5 @@ export default class MPromise {
         this._handleNext(result);
       }
     }
-  }
-
-  _handleResolve(result) {
-    this.resolveCallback(result);
-  }
-
-  _onPromiseResolve(callback) {
-    this.resolveCallback = callback;
   }
 }
